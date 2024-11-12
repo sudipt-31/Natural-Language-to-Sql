@@ -1,0 +1,21 @@
+genre_id,genre_name,avg_box_office_millions,total_movies,popularity_score
+1,Drama,450,156,8.5
+2,Action,520,134,8.8
+3,Romance,380,178,8.2
+4,Thriller,290,98,7.9
+5,Comedy,420,145,8.6
+6,Biography,380,45,8.4
+7,Historical,480,28,7.8
+8,Science Fiction,360,42,7.6
+9,Animation,280,25,7.2
+10,War,400,32,8.0
+11,Documentary,180,15,6.8
+12,Sports,320,28,7.9
+13,Period,450,20,8.1
+14,Musical,320,30,7.7
+15,Superhero,550,18,8.4
+16,Family,280,35,7.5
+17,Adventure,400,27,8.2
+18,Mystery,290,23,7.8
+19,Horror,200,40,7.3
+20,Fantasy,380,22,7.9

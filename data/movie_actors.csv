@@ -1,0 +1,41 @@
+movie_id,actor_id,role_type,character_name,screen_time_minutes
+1,5,Lead,Pawan Kumar Chaturvedi,120
+1,7,Supporting,Munni,85
+2,1,Lead,Mahavir Singh Phogat,125
+2,6,Supporting,Geeta Phogat,95
+3,2,Lead,Padmavati,110
+3,3,Lead,Alauddin Khilji,105
+4,3,Lead,Murad Ahmed,115
+4,4,Lead,Safeena Firdausi,95
+5,9,Lead,Captain Vikram Batra,110
+5,8,Lead,Dimple Cheema,85
+6,21,Lead,Aditya,100
+6,22,Supporting,Neha,80
+7,15,Lead,Laxmi Agarwal,110
+7,24,Supporting,Amol Parashar,75
+8,10,Lead,Sahir Khan,135
+8,19,Supporting,Mohini,95
+9,12,Lead,Raees,120
+9,11,Supporting,Sara,90
+10,20,Lead,Laila,95
+10,17,Supporting,Riyaz,70
+11,14,Lead,Nakul,105
+11,17,Supporting,Rozina,85
+12,16,Lead,Sanjay Dutt,130
+12,13,Supporting,Karishma,90
+13,15,Lead,Meera,100
+13,18,Supporting,Arjun,80
+14,12,Lead,Havildar Ishar Singh,125
+14,20,Supporting,Sardarni Jhamun,90
+15,16,Lead,Haider,115
+15,13,Supporting,Arshia,85
+16,21,Lead,Mauji,100
+16,17,Supporting,Mamta,75
+17,14,Lead,Akash,120
+17,15,Supporting,Sofie,95
+18,23,Lead,Krish,115
+18,22,Supporting,Ananya,90
+19,10,Lead,Rustom Billimoria,125
+19,11,Supporting,Julia,100
+20,24,Lead,Prem,105
+20,17,Supporting,Sandhya,80

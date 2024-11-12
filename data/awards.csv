@@ -1,0 +1,13 @@
+award_id,award_name,year_awarded,movie_id,category,recipient,prestige_score
+1,Filmfare Best Movie,2018,1,Best Film,Bajrangi Bhaijaan,9.0
+2,National Film Award,2019,2,Best Film,Dangal,9.5
+3,IIFA Best Actor,2020,3,Best Actor,Ranveer Singh,8.5
+4,Filmfare Best Actress,2021,4,Best Actress,Alia Bhatt,8.5
+5,Zee Cine Best Film,2022,5,Best Film,Shershaah,8.0
+6,IIFA Best Supporting Actor,2016,7,Best Supporting Actor,Amol Parashar,7.5
+7,Filmfare Best Actor,2019,11,Best Actor,Ayushmann Khurrana,9.0
+8,National Film Award,2019,12,Best Actor,Ranbir Kapoor,9.5
+9,Zee Cine Best Supporting Actress,2020,15,Best Supporting Actress,Taapsee Pannu,8.0
+10,Filmfare Best Director,2019,9,Best Director,Rohit Shetty,9.0
+11,MAMI Award,2017,13,Best Indie Film,NH10,8.5
+12,Filmfare Critics Best Actor,2021,17,Best Actor,Ayushmann Khurrana,8.5

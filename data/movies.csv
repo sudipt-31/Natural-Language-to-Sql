@@ -1,0 +1,21 @@
+movie_id,title,release_year,genre_id,director_id,production_house,language,budget_millions,box_office_millions,ott_platform,runtime_minutes,imdb_rating,audience_score,critics_score
+1,Bajrangi Bhaijaan,2015,1,4,Salman Khan Films,Hindi,90,915,Disney+ Hotstar,163,8.0,92,88
+2,Dangal,2016,6,5,Aamir Khan Productions,Hindi,70,2000,Netflix,161,8.4,95,94
+3,Padmaavat,2018,7,2,Bhansali Productions,Hindi,215,585,Amazon Prime,164,7.0,80,85
+4,Gully Boy,2019,1,3,Excel Entertainment,Hindi,55,238,Amazon Prime,153,8.2,90,87
+5,Shershaah,2021,6,6,Dharma Productions,Hindi,55,60,Amazon Prime,135,8.4,96,85
+6,Dhamaal,2007,5,12,Bhansali Production,Hindi,25,60,Disney+ Hotstar,125,7.2,82,70
+7,Chhapaak,2020,6,8,Fox Star Studios,Hindi,35,45,Disney+ Hotstar,122,7.6,88,78
+8,Dhoom 3,2013,2,10,Yash Raj Films,Hindi,100,284,Amazon Prime,172,7.1,75,65
+9,Raees,2017,4,15,Excel Entertainment,Hindi,45,137,Netflix,143,7.4,79,72
+10,Margarita with a Straw,2014,1,19,RVCJ Media,Hindi,10,6,Netflix,100,7.8,90,83
+11,Badhaai Ho,2018,5,17,Junglee Pictures,Hindi,28,85,Disney+ Hotstar,128,8.1,92,88
+12,Sanju,2018,6,16,Vinod Chopra Films,Hindi,60,340,Netflix,155,7.8,85,75
+13,NH10,2015,4,7,Clean Slate Filmz,Hindi,12,16,Amazon Prime,115,7.5,87,82
+14,Kesari,2019,10,13,Dharma Productions,Hindi,80,154,Amazon Prime,150,7.9,90,75
+15,Haider,2014,1,7,Eros Entertainment,Hindi,30,44,Amazon Prime,147,8.0,92,86
+16,Sui Dhaaga,2018,16,12,Yash Raj Films,Hindi,20,35,Amazon Prime,124,7.6,86,75
+17,Andhadhun,2018,4,15,Viacom18 Studios,Hindi,32,74,Netflix,139,8.3,95,90
+18,2 States,2014,3,21,Dharma Productions,Hindi,35,58,Netflix,128,7.4,82,75
+19,Rangoon,2017,7,20,Nadiadwala Grandson Entertainment,Hindi,60,20,Amazon Prime,167,6.8,68,60
+20,Dum Laga Ke Haisha,2015,5,19,Yash Raj Films,Hindi,22,30,Amazon Prime,105,7.9,87,80
