@@ -24,12 +24,14 @@ load_dotenv()
 
 
 # Database initialization function
+
 def init_database():
     try:
         conn = sqlite3.connect('bollywood_analysis.db')
         cursor = conn.cursor()
         
-        # Check if data files exist before reading
+        # Check if data files exist in the 'data' directory before reading
+        data_folder = 'data'
         required_files = [
             'actors.csv', 'directors.csv', 'genres.csv', 
             'movies.csv', 'awards.csv', 'movie_actors.csv', 
@@ -37,19 +39,20 @@ def init_database():
         ]
         
         for file in required_files:
-            if not os.path.exists(file):
-                st.error(f"Missing required file: {file}")
+            file_path = os.path.join(data_folder, file)
+            if not os.path.exists(file_path):
+                st.error(f"Missing required file: {file_path}")
                 return False
         
         # Read CSV files with error handling
         try:
-            actors_df = pd.read_csv('actors.csv')
-            directors_df = pd.read_csv('directors.csv')
-            genres_df = pd.read_csv('genres.csv')
-            movies_df = pd.read_csv('movies.csv')
-            awards_df = pd.read_csv('awards.csv')
-            movie_actors_df = pd.read_csv('movie_actors.csv')
-            movie_performance_df = pd.read_csv('movie_performance.csv')
+            actors_df = pd.read_csv(os.path.join(data_folder, 'actors.csv'))
+            directors_df = pd.read_csv(os.path.join(data_folder, 'directors.csv'))
+            genres_df = pd.read_csv(os.path.join(data_folder, 'genres.csv'))
+            movies_df = pd.read_csv(os.path.join(data_folder, 'movies.csv'))
+            awards_df = pd.read_csv(os.path.join(data_folder, 'awards.csv'))
+            movie_actors_df = pd.read_csv(os.path.join(data_folder, 'movie_actors.csv'))
+            movie_performance_df = pd.read_csv(os.path.join(data_folder, 'movie_performance.csv'))
         except Exception as e:
             st.error(f"Error reading CSV files: {str(e)}")
             return False
