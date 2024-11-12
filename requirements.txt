@@ -7,3 +7,4 @@ matplotlib
 SpeechRecognition
 audio-recorder-streamlit
 tiktoken
+openpyxl
