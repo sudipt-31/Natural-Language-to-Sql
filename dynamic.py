@@ -35,11 +35,11 @@ def init_database():
         cursor = conn.cursor()
         
         # Check if data files exist before reading
-        required_files = [
-            'actors.csv', 'directors.csv', 'genres.csv', 
-            'movies.csv', 'awards.csv', 'movie_actors.csv', 
-            'movie_performance.csv'
-        ]
+required_files = [
+    'data/actors.csv', 'data/directors.csv', 'data/genres.csv', 
+    'data/movies.csv', 'data/awards.csv', 'data/movie_actors.csv', 
+    'data/movie_performance.csv'
+]
         
         for file in required_files:
             if not os.path.exists(file):
@@ -48,13 +48,13 @@ def init_database():
         
         # Read CSV files with error handling
         try:
-            actors_df = pd.read_csv('actors.csv')
-            directors_df = pd.read_csv('directors.csv')
-            genres_df = pd.read_csv('genres.csv')
-            movies_df = pd.read_csv('movies.csv')
-            awards_df = pd.read_csv('awards.csv')
-            movie_actors_df = pd.read_csv('movie_actors.csv')
-            movie_performance_df = pd.read_csv('movie_performance.csv')
+            actors_df = pd.read_csv('data/actors.csv')
+directors_df = pd.read_csv('data/directors.csv')
+genres_df = pd.read_csv('data/genres.csv')
+movies_df = pd.read_csv('data/movies.csv')
+awards_df = pd.read_csv('data/awards.csv')
+movie_actors_df = pd.read_csv('data/movie_actors.csv')
+movie_performance_df = pd.read_csv('data/movie_performance.csv')
         except Exception as e:
             st.error(f"Error reading CSV files: {str(e)}")
             return False
