@@ -8,3 +8,4 @@ SpeechRecognition
 audio-recorder-streamlit
 tiktoken
 openpyxl
+google-generativeai
