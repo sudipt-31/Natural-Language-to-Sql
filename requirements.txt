@@ -9,3 +9,4 @@ audio-recorder-streamlit
 tiktoken
 openpyxl
 google-generativeai
+langchain-google-genai
