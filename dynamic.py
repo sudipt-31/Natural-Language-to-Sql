@@ -30,59 +30,145 @@ load_dotenv()
 
 # Database initialization function
 def init_database():
+    """
+    Initialize the SQLite database by reading CSV files and creating tables.
+    Provides extensive error checking and logging.
+    """
     conn = None
     try:
-        conn = sqlite3.connect('bollywood_analysis.db')
-        cursor = conn.cursor()
-        
-        # Define required files
+        # Ensure data directory exists
+        if not os.path.exists('data'):
+            st.error("Data directory 'data' does not exist!")
+            return False
+
+        # Define required files with full paths
         required_files = [
             'data/actors.csv', 'data/directors.csv', 'data/genres.csv', 
             'data/movies.csv', 'data/awards.csv', 'data/movie_actors.csv', 
             'data/movie_performance.csv'
         ]
         
-        # Check if data files exist
+        # Detailed file checking
+        missing_files = []
         for file in required_files:
             if not os.path.exists(file):
-                st.error(f"Missing required file: {file}")
+                missing_files.append(file)
+        
+        if missing_files:
+            st.error(f"Missing required files: {', '.join(missing_files)}")
+            return False
+
+        # Create or connect to the database
+        conn = sqlite3.connect('bollywood_analysis.db')
+        cursor = conn.cursor()
+
+        # Read and load CSV files
+        tables_to_load = [
+            ('actors', 'data/actors.csv'),
+            ('directors', 'data/directors.csv'),
+            ('genres', 'data/genres.csv'),
+            ('movies', 'data/movies.csv'),
+            ('awards', 'data/awards.csv'),
+            ('movie_actors', 'data/movie_actors.csv'),
+            ('movie_performance', 'data/movie_performance.csv')
+        ]
+
+        # Load data with detailed error handling
+        for table_name, file_path in tables_to_load:
+            try:
+                # Read CSV
+                df = pd.read_csv(file_path)
+                
+                # Validate DataFrame
+                if df.empty:
+                    st.warning(f"CSV file {file_path} is empty!")
+                    continue
+
+                # Drop table if exists to ensure clean load
+                cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+                
+                # Convert to SQL with type inference
+                df.to_sql(table_name, conn, if_exists='replace', index=False)
+                
+                # Verify table creation and data
+                cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+                count = cursor.fetchone()[0]
+                
+                st.success(f"Loaded {count} records into {table_name}")
+
+            except Exception as load_error:
+                st.error(f"Error loading {table_name} from {file_path}: {str(load_error)}")
+                conn.close()
                 return False
+
+        # Commit changes
+        conn.commit()
         
-        # Read CSV files
-        try:
-            actors_df = pd.read_csv('data/actors.csv')
-            directors_df = pd.read_csv('data/directors.csv')
-            genres_df = pd.read_csv('data/genres.csv')
-            movies_df = pd.read_csv('data/movies.csv')
-            awards_df = pd.read_csv('data/awards.csv')
-            movie_actors_df = pd.read_csv('data/movie_actors.csv')
-            movie_performance_df = pd.read_csv('data/movie_performance.csv')
-        except Exception as e:
-            st.error(f"Error reading CSV files: {str(e)}")
-            return False
+        return True
+
+    except Exception as e:
+        st.error(f"Comprehensive Database Initialization Error: {str(e)}")
+        if conn:
+            conn.close()
+        return False
+
+    finally:
+        if conn:
+            conn.close()
+
+def check_database():
+    """
+    Comprehensive database check with detailed diagnostics.
+    """
+    try:
+        # Check if database file exists
+        if not os.path.exists('bollywood_analysis.db'):
+            st.error("Database file not found! Initializing database...")
+            return init_database()
+            
+        conn = sqlite3.connect('bollywood_analysis.db')
+        cursor = conn.cursor()
         
-        # Save to SQLite
-        try:
-            actors_df.to_sql('actors', conn, if_exists='replace', index=False)
-            directors_df.to_sql('directors', conn, if_exists='replace', index=False)
-            genres_df.to_sql('genres', conn, if_exists='replace', index=False)
-            movies_df.to_sql('movies', conn, if_exists='replace', index=False)
-            awards_df.to_sql('awards', conn, if_exists='replace', index=False)
-            movie_actors_df.to_sql('movie_actors', conn, if_exists='replace', index=False)
-            movie_performance_df.to_sql('movie_performance', conn, if_exists='replace', index=False)
-        except Exception as e:
-            st.error(f"Error creating database tables: {str(e)}")
-            return False
+        # Tables to check
+        tables = ['movies', 'actors', 'directors', 'genres', 'awards', 'movie_actors', 'movie_performance']
+        
+        # Detailed table checking
+        table_issues = []
+        for table in tables:
+            try:
+                # Check if table exists
+                cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table}';")
+                if not cursor.fetchone():
+                    table_issues.append(f"Table {table} does not exist")
+                    continue
+                
+                # Check table has data
+                cursor.execute(f"SELECT COUNT(*) FROM {table}")
+                count = cursor.fetchone()[0]
+                
+                if count == 0:
+                    table_issues.append(f"Table {table} is empty")
+            
+            except sqlite3.Error as e:
+                table_issues.append(f"Error checking {table}: {str(e)}")
+        
+        conn.close()
+        
+        # If any table issues, attempt to reinitialize
+        if table_issues:
+            st.warning("Database issues detected:")
+            for issue in table_issues:
+                st.warning(issue)
+            
+            st.info("Attempting to reinitialize database...")
+            return init_database()
         
         return True
         
     except Exception as e:
-        st.error(f"Database initialization error: {str(e)}")
-        return False
-    
-    finally:
-        if conn:
-            conn.close()
+        st.error(f"Comprehensive Database Check Failed: {str(e)}")
+        return init_database()
+
 
 # Predefined queries dictionary
 PREDEFINED_QUERIES = {
