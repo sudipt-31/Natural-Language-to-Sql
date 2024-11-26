@@ -30,36 +30,38 @@ load_dotenv()
 
 # Database initialization function
 def init_database():
+    conn = None
     try:
         conn = sqlite3.connect('bollywood_analysis.db')
         cursor = conn.cursor()
         
-        # Check if data files exist before reading
-required_files = [
-    'data/actors.csv', 'data/directors.csv', 'data/genres.csv', 
-    'data/movies.csv', 'data/awards.csv', 'data/movie_actors.csv', 
-    'data/movie_performance.csv'
-]
+        # Define required files
+        required_files = [
+            'data/actors.csv', 'data/directors.csv', 'data/genres.csv', 
+            'data/movies.csv', 'data/awards.csv', 'data/movie_actors.csv', 
+            'data/movie_performance.csv'
+        ]
         
+        # Check if data files exist
         for file in required_files:
             if not os.path.exists(file):
                 st.error(f"Missing required file: {file}")
                 return False
         
-        # Read CSV files with error handling
+        # Read CSV files
         try:
             actors_df = pd.read_csv('data/actors.csv')
-directors_df = pd.read_csv('data/directors.csv')
-genres_df = pd.read_csv('data/genres.csv')
-movies_df = pd.read_csv('data/movies.csv')
-awards_df = pd.read_csv('data/awards.csv')
-movie_actors_df = pd.read_csv('data/movie_actors.csv')
-movie_performance_df = pd.read_csv('data/movie_performance.csv')
+            directors_df = pd.read_csv('data/directors.csv')
+            genres_df = pd.read_csv('data/genres.csv')
+            movies_df = pd.read_csv('data/movies.csv')
+            awards_df = pd.read_csv('data/awards.csv')
+            movie_actors_df = pd.read_csv('data/movie_actors.csv')
+            movie_performance_df = pd.read_csv('data/movie_performance.csv')
         except Exception as e:
             st.error(f"Error reading CSV files: {str(e)}")
             return False
         
-        # Save to SQLite with error handling
+        # Save to SQLite
         try:
             actors_df.to_sql('actors', conn, if_exists='replace', index=False)
             directors_df.to_sql('directors', conn, if_exists='replace', index=False)
@@ -72,12 +74,15 @@ movie_performance_df = pd.read_csv('data/movie_performance.csv')
             st.error(f"Error creating database tables: {str(e)}")
             return False
         
-        conn.close()
         return True
         
     except Exception as e:
         st.error(f"Database initialization error: {str(e)}")
         return False
+    
+    finally:
+        if conn:
+            conn.close()
 
 # Predefined queries dictionary
 PREDEFINED_QUERIES = {
