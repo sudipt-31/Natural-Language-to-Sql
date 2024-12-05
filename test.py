@@ -17,12 +17,10 @@ import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 
-
-
 # Configure Streamlit page
 st.set_page_config(
-    page_title="Bollywood Movie Analysis",
-    page_icon="🎬",
+    page_title="Data Analysis App",
+    page_icon="🖼️",
     layout="wide"
 )
 
@@ -80,7 +78,6 @@ def init_database():
         st.error(f"Database initialization error: {str(e)}")
         return False
 
-
 # Predefined queries dictionary
 PREDEFINED_QUERIES = {
     "What are the top 5 highest-grossing movies?": """
@@ -93,52 +90,6 @@ PREDEFINED_QUERIES = {
         
     """
 }
-
-
-def get_dynamic_schema():
-    """Extract schema information from SQLite database and format it for the prompt"""
-    try:
-        conn = sqlite3.connect('bollywood_analysis.db')
-        cursor = conn.cursor()
-        
-        # Get list of all tables
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        tables = cursor.fetchall()
-        
-        schema_info = []
-        for table in tables:
-            table_name = table[0]
-            # Get column information for each table
-            cursor.execute(f"PRAGMA table_info({table_name});")
-            columns = cursor.fetchall()
-            
-            # Format column information
-            column_info = []
-            for col in columns:
-                name = col[1]
-                data_type = col[2]
-                is_pk = " (PRIMARY KEY)" if col[5] == 1 else ""
-                
-                # Check if column is a foreign key
-                cursor.execute(f"PRAGMA foreign_key_list({table_name});")
-                fks = cursor.fetchall()
-                is_fk = ""
-                for fk in fks:
-                    if fk[3] == name:
-                        is_fk = f" (FOREIGN KEY -> {fk[2]}.{fk[4]})"
-                        break
-                
-                column_info.append(f"   - {name}{is_pk}{is_fk}")
-            
-            # Add formatted table schema to list
-            schema_info.append(f"{len(schema_info) + 1}. {table_name}\n" + "\n".join(column_info))
-        
-        conn.close()
-        return "\n\n".join(schema_info)
-        
-    except Exception as e:
-        st.error(f"Error getting schema info: {str(e)}")
-        return None
 
 def extract_keywords_from_question(question: str) -> set:
     """Extract meaningful keywords from the question"""
@@ -379,79 +330,7 @@ def create_database_from_excel(uploaded_file):
         return None, None
 
 
-def get_database_stats_from_db(db_name):
-    """
-    Get statistics from the specified database.
-    
-    Args:
-        db_name: Name of the database file
-        
-    Returns:
-        dict: Database statistics
-    """
-    try:
-        conn = sqlite3.connect(db_name)
-        cursor = conn.cursor()
-        
-        # Get table count
-        cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table'")
-        table_count = cursor.fetchone()[0]
-        
-        # Get row count from user_data table
-        cursor.execute("SELECT COUNT(*) FROM uploaded_data")
-        row_count = cursor.fetchone()[0]
-        
-        # Get column count
-        cursor.execute("PRAGMA table_info(uploaded_data)")
-        column_count = len(cursor.fetchall())
-        
-        conn.close()
-        
-        return {
-            'tables': table_count,
-            'rows': row_count,
-            'columns': column_count
-        }
-        
-    except Exception as e:
-        print(f"Error getting database stats: {e}")
-        return None
 
-
-def get_db_connection():
-    """
-    Returns the shared database connection.
-    If no connection exists, it creates a new one based on `st.session_state.current_db`.
-    """
-    if st.session_state.current_db_connection is None:
-        if st.session_state.current_db is None:
-            raise ValueError("No database is currently active.")
-        st.session_state.current_db_connection = sqlite3.connect(st.session_state.current_db)
-    return st.session_state.current_db_connection
-def close_db_connection():
-    """
-    Closes the shared database connection if it exists.
-    """
-    if st.session_state.current_db_connection is not None:
-        st.session_state.current_db_connection.close()
-        st.session_state.current_db_connection = None
-
-def execute_query_on_db(db_name, sql_query):
-    """
-    Executes the provided SQL query on the specified database.
-    """
-    try:
-        # Connect to the database using the provided name
-        conn = sqlite3.connect(db_name)
-        results = pd.read_sql_query(sql_query, conn)
-        conn.close()
-        return results
-    except sqlite3.Error as sql_error:
-        st.error(f"SQL Error: {str(sql_error)}")
-        return None
-    except Exception as e:
-        st.error(f"Error executing query: {str(e)}")
-        return None
 
 def get_database_stats_from_db(db_name):
     """
@@ -494,7 +373,45 @@ def get_database_stats_from_db(db_name):
     except Exception as e:
         print(f"Error getting database stats: {e}")
         return None
-       
+  
+
+
+def get_db_connection():
+    """
+    Returns the shared database connection.
+    If no connection exists, it creates a new one based on `st.session_state.current_db`.
+    """
+    if st.session_state.current_db_connection is None:
+        if st.session_state.current_db is None:
+            raise ValueError("No database is currently active.")
+        st.session_state.current_db_connection = sqlite3.connect(st.session_state.current_db)
+    return st.session_state.current_db_connection
+def close_db_connection():
+    """
+    Closes the shared database connection if it exists.
+    """
+    if st.session_state.current_db_connection is not None:
+        st.session_state.current_db_connection.close()
+        st.session_state.current_db_connection = None
+
+def execute_query_on_db(db_name, sql_query):
+    """
+    Executes the provided SQL query on the specified database.
+    """
+    try:
+        # Connect to the database using the provided name
+        conn = sqlite3.connect(db_name)
+        results = pd.read_sql_query(sql_query, conn)
+        conn.close()
+        return results
+    except sqlite3.Error as sql_error:
+        st.error(f"SQL Error: {str(sql_error)}")
+        return None
+    except Exception as e:
+        st.error(f"Error executing query: {str(e)}")
+        return None
+
+     
 def execute_query(sql_query):
     """Execute SQL query and return results"""
     try:
@@ -550,84 +467,152 @@ def display_graph(results):
         "Select Chart Type",
         ["Bar Chart", "Line Chart", "Pie Chart", "Scatter Plot", "Histogram"]
     )
-
-    # Set a smaller figure size
-    fig, ax = plt.subplots(figsize=(8, 4))  # Adjust the size as needed
-
-    # Plot based on the selected chart type
-    if chart_type == "Bar Chart":
-        results.plot(kind='bar', ax=ax)
-    elif chart_type == "Line Chart":
-        results.plot(kind='line', ax=ax)
-    elif chart_type == "Pie Chart":
-        # For pie chart, we need to select a single column to plot
-        if results.shape[1] >= 2:
-            results.set_index(results.columns[0], inplace=True)
-            results.iloc[:, 0].plot(kind='pie', ax=ax, autopct='%1.1f%%')
-        else:
-            st.error("Pie chart requires at least two columns: one for labels and one for values.")
-    elif chart_type == "Scatter Plot":
-        # For scatter plot, we need at least two numerical columns
-        if results.select_dtypes(include=['number']).shape[1] >= 2:
-            x_col = st.selectbox("Select X-axis", results.select_dtypes(include=['number']).columns)
-            y_col = st.selectbox("Select Y-axis", results.select_dtypes(include=['number']).columns)
-            results.plot(kind='scatter', x=x_col, y=y_col, ax=ax)
-        else:
-            st.error("Scatter plot requires at least two numerical columns.")
-    elif chart_type == "Histogram":
-        # For histogram, select a single numerical column
-        num_cols = results.select_dtypes(include=['number']).columns
-        if len(num_cols) > 0:
-            hist_col = st.selectbox("Select Column for Histogram", num_cols)
-            results[hist_col].plot(kind='hist', ax=ax, bins=10)
-        else:
-            st.error("Histogram requires at least one numerical column.")
-
-    # Display the plot
-    st.pyplot(fig)
-
-def get_table_schema():
-    """Retrieve schema information for all tables in the current database."""
+    
+    # Create figure with default style and size
+    fig, ax = plt.subplots(figsize=(10, 6))  # Increased size for better visibility
+    
     try:
-        # Ensure the current database is set
+        # Set basic style elements
+        ax.grid(True, linestyle='--', alpha=0.7)
+        
+        # Plot based on the selected chart type
+        if chart_type == "Bar Chart":
+            if len(results.columns) >= 2:
+                results.set_index(results.columns[0], inplace=True)
+                results.plot(kind='bar', ax=ax)
+                plt.xticks(rotation=45, ha='right')
+            else:
+                st.error("Bar chart requires at least two columns")
+                return
+
+        elif chart_type == "Line Chart":
+            if len(results.columns) >= 2:
+                results.set_index(results.columns[0], inplace=True)
+                results.plot(kind='line', ax=ax, marker='o')
+                plt.xticks(rotation=45, ha='right')
+            else:
+                st.error("Line chart requires at least two columns")
+                return
+
+        elif chart_type == "Pie Chart":
+            if results.shape[1] >= 2:
+                results.set_index(results.columns[0], inplace=True)
+                results.iloc[:, 0].plot(kind='pie', ax=ax, autopct='%1.1f%%')
+                plt.axis('equal')  # Equal aspect ratio ensures circular plot
+            else:
+                st.error("Pie chart requires at least two columns: one for labels and one for values.")
+                return
+
+        elif chart_type == "Scatter Plot":
+            num_cols = results.select_dtypes(include=['number']).columns
+            if len(num_cols) >= 2:
+                x_col = st.selectbox("Select X-axis", num_cols)
+                y_col = st.selectbox("Select Y-axis", num_cols)
+                results.plot(kind='scatter', x=x_col, y=y_col, ax=ax)
+                ax.grid(True)
+            else:
+                st.error("Scatter plot requires at least two numerical columns.")
+                return
+
+        elif chart_type == "Histogram":
+            num_cols = results.select_dtypes(include=['number']).columns
+            if len(num_cols) > 0:
+                hist_col = st.selectbox("Select Column for Histogram", num_cols)
+                results[hist_col].plot(kind='hist', ax=ax, bins=20, edgecolor='black')
+                ax.grid(True)
+            else:
+                st.error("Histogram requires at least one numerical column.")
+                return
+
+        # Add labels and title
+        plt.xlabel(results.index.name if results.index.name else 'Index')
+        plt.ylabel('Value')
+        plt.title(f'{chart_type} of Query Results')
+
+        # Adjust layout to prevent label cutoff
+        plt.tight_layout()
+        
+        # Display the plot
+        st.pyplot(fig)
+        plt.close(fig)  # Clean up the figure
+
+    except Exception as e:
+        st.error(f"Error creating graph: {str(e)}")
+        plt.close(fig)  # Clean up in case of error
+   
+def get_table_schema():
+    """
+    Retrieve comprehensive schema information for all tables in the current database.
+    
+    Returns:
+        dict: Schema information including column details, primary keys, and foreign keys
+              for each table in the database
+    """
+    try:
+        # Get database name from session state
         db_name = st.session_state.current_db
         if not db_name:
             raise ValueError("No database selected.")
-
+        
         # Connect to the database
         conn = sqlite3.connect(db_name)
         cursor = conn.cursor()
-
+        
         # Dictionary to store schema information
         schema_info = {}
-
-        # Get all tables in the database
+        
+        # Get all tables
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
         tables = [table[0] for table in cursor.fetchall()]
-
+        
         if not tables:
             raise ValueError("No tables found in the database.")
-
-        # Retrieve schema details for each table
+        
+        # Get schema details for each table
         for table in tables:
+            # Get column information
             cursor.execute(f"PRAGMA table_info({table});")
             columns = cursor.fetchall()
-            schema_info[table] = [
-                {
-                    "name": col[1],
-                    "type": col[2],
-                    "primary_key": bool(col[5]),
+            
+            # Get foreign key information
+            cursor.execute(f"PRAGMA foreign_key_list({table});")
+            fks = cursor.fetchall()
+            
+            # Process columns with enhanced information
+            table_columns = []
+            for col in columns:
+                column_info = {
+                    'name': col[1],
+                    'type': col[2],
+                    'nullable': not col[3],  # NOT NULL constraint
+                    'default_value': col[4],
+                    'primary_key': bool(col[5])
                 }
-                for col in columns
-            ]
-
+                
+                # Check if this column is a foreign key
+                for fk in fks:
+                    if fk[3] == col[1]:
+                        column_info['foreign_key'] = {
+                            'references_table': fk[2],
+                            'references_column': fk[4],
+                            'on_delete': fk[5],
+                            'on_update': fk[6]
+                        }
+                
+                table_columns.append(column_info)
+            
+            schema_info[table] = table_columns
+        
         conn.close()
         return schema_info
-
+        
+    except ValueError as ve:
+        st.warning(str(ve))
+        return None
     except Exception as e:
         st.error(f"Error retrieving table schema: {str(e)}")
         return None
-    
+   
 def check_query_cache(question):
     """
     Check if the question exists in the query logs and return the cached SQL query if found.
@@ -788,56 +773,7 @@ def display_schema_sidebar(schema_info):
                     elif table_name == "awards":
                         st.info("Tracks movie awards and nominations")
 
-def get_table_schema():
-    """Get enhanced schema information for all tables"""
-    try:
-        conn = sqlite3.connect('bollywood_analysis.db')
-        cursor = conn.cursor()
-        
-        # Dictionary to store schema for each table
-        schema_info = {}
-        
-        # Get all tables
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        tables = cursor.fetchall()
-        
-        for table in tables:
-            table_name = table[0]
-            
-            # Get column information
-            cursor.execute(f"PRAGMA table_info({table_name});")
-            columns = cursor.fetchall()
-            
-            # Get foreign key information
-            cursor.execute(f"PRAGMA foreign_key_list({table_name});")
-            fks = cursor.fetchall()
-            
-            # Process columns with enhanced information
-            table_columns = []
-            for col in columns:
-                column_info = {
-                    'name': col[1],
-                    'type': col[2],
-                    'primary_key': bool(col[5])
-                }
-                
-                # Check if this column is a foreign key
-                for fk in fks:
-                    if fk[3] == col[1]:  # if column name matches FK column
-                        column_info['type'] = f"FOREIGN KEY -> {fk[2]}.{fk[4]}"
-                        break
-                
-                table_columns.append(column_info)
-            
-            schema_info[table_name] = table_columns
-        
-        conn.close()
-        return schema_info
-        
-    except Exception as e:
-        st.error(f"Error getting schema info: {str(e)}")
-        return None
-    
+  
 def process_speech_to_text():
     """Function to handle speech input and convert it to text"""
     try:
@@ -931,7 +867,7 @@ def main():
         # Main header
         with st.container():
             st.markdown('<div class="main-header">', unsafe_allow_html=True)
-            st.title("🎬 Bollywood Movie Analysis")
+            st.title("🖼️ Data Analysis App")
             st.subheader("Natural Language to SQL Query Converter")
             st.markdown('</div>', unsafe_allow_html=True)
 
